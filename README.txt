@@ -12,8 +12,6 @@ How to Use:
 
 Ensure Python 3 is installed on your system.
 
-Locate the main game script (main.py)
-
 The game window will open automatically. Click on the squares to play.
 
 Contact Information:

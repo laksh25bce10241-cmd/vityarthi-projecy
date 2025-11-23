@@ -1,0 +1,106 @@
+Project Technical Report: Tkinter Tic-Tac-Toe Game
+
+Project Title: Python Tic-Tac-Toe GUI Application
+Author: laksh sachdeva
+Date:  23 November 2025
+
+1. Introduction
+
+This report details the design and implementation of a classic 3x3 Tic-Tac-Toe game developed using Python and the standard GUI library, Tkinter. The primary objective of this project was to create a fully functional, self-contained, two-player application that demonstrates competence in GUI programming, event handling, and game logic implementation within a Python environment.
+
+2. Project Architecture and Design
+
+2.1 Technology Stack
+
+Component
+
+Technology
+
+Rationale
+
+Language
+
+Python 3
+
+Chosen for its clear syntax and ease of use in rapid application development.
+
+GUI Framework
+
+Tkinter
+
+Python's standard library for GUIs, ensuring zero external dependencies and high portability.
+
+2.2 Functional Requirements
+
+The application must satisfy the following core requirements:
+
+Game Board: Display a clear 3x3 grid to represent the game state.
+
+Player Input: Allow two users to click on the squares to place their marks ('X' and 'O').
+
+Turn Management: Alternate turns between Player X and Player O.
+
+Win Condition Check: Automatically check the board state after every move for a win (three in a row horizontally, vertically, or diagonally).
+
+Draw Condition Check: Determine if the game has ended in a draw (all squares filled with no winner).
+
+Game Reset: Provide a function to clear the board and reset the game state for a new round.
+
+3. Implementation Details
+
+3.1 Game State Management
+
+The state of the 3x3 board is managed using a nested list (a list of lists) in Python. This structure allows for efficient indexing and mapping of GUI buttons to the internal game state:
+
+# Internal representation of the board
+# 0 = Empty, 1 = Player X, 2 = Player O
+board = [[0, 0, 0],
+         [0, 0, 0],
+         [0, 0, 0]]
+
+
+3.2 GUI Implementation (Tkinter)
+
+The GUI is constructed using the tkinter.Tk() root window.
+
+Buttons: Nine tkinter.Button widgets are created and placed in the grid using the .grid() layout manager, corresponding directly to the 3x3 board structure.
+
+Event Handling: Each button is configured with a command callback that executes a function (handle_click) upon being pressed. This function updates the internal board state and the button's text/appearance.
+
+Status Label: A tkinter.Label widget is used to display the current player's turn and the final game result (Win, Lose, or Draw).
+
+3.3 The check_win() Algorithm
+
+The most critical component is the win condition function, which is called after every successful move. The function efficiently iterates through all possible win scenarios:
+
+Horizontal Checks: Iterates through each of the three rows, checking if all elements are identical and non-zero.
+
+Vertical Checks: Iterates through each of the three columns, checking if all elements are identical and non-zero.
+
+Diagonal Checks: Checks the two main diagonals (top-left to bottom-right, and top-right to bottom-left).
+
+If a win is detected, the game is paused, and the status label is updated with the winning player. If no win is found and the board is full, the game is declared a draw.
+
+4. Testing and Validation
+
+The application was tested manually to ensure all functional requirements were met:
+
+Successful Play: Verified that players can successfully alternate turns and place their markers.
+
+Win Detection: Tested all eight possible winning scenarios (3 horizontal, 3 vertical, 2 diagonal) to ensure the check_win() function correctly identifies the winner.
+
+Draw Detection: Verified that the game correctly declares a draw when all nine squares are filled without a winner.
+
+Reset Functionality: Confirmed that the "Reset" button clears both the GUI buttons and the internal game state array.
+
+5. Conclusion and Future Scope
+
+The Tkinter Tic-Tac-Toe project successfully meets all defined objectives, providing a robust and easy-to-run application. It serves as a strong foundation for future GUI-based projects in Python.
+
+Future Enhancements:
+
+Score Tracking: Implement persistent score tracking across multiple rounds.
+
+Difficulty Levels: Integrate an AI opponent (using simple algorithms like Minimax) to allow for single-player mode.
+
+Aesthetics: Improve the user interface design by adding custom colors, fonts, and potentially using Tkinter theming extensions.

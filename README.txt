@@ -21,7 +21,7 @@ Contact Information:
 [ Email - laksh.25bce10241@vitbhopal.ac.in ]
 
 License:
- No standard copyright protection.
+  I have attached the license file
 
 Notes:
 

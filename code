@@ -1,9 +1,8 @@
-
 from tkinter import *
 
 root = Tk()
 root.geometry("330x550")
-root.title("Tic Tac Toe (2-Player)")
+root.title("Tic Tac Toe")
 
 root.resizable(0,0)
 
@@ -12,6 +11,8 @@ frame1.pack()
 titleLabel = Label(frame1 , text="Tic Tac Toe" , font=("Arial" , 26) , bg="orange" , width=16 )
 titleLabel.grid(row=0 , column=0)
 
+optionFrame = Frame(root , bg="grey")
+optionFrame.pack()
 
 frame2 = Frame(root , bg="yellow")
 frame2.pack()
@@ -22,6 +23,23 @@ board = { 1:" " , 2:" " , 3:" ",
 
 turn = "x"
 game_end = False
+mode = "singlePlayer"
+
+def changeModeToSinglePlayer(): 
+    global mode 
+    mode = "singlePlayer"
+    singlePlayerButton["bg"] = "lightgreen"
+    multiPlayerButton["bg"] = "lightgrey"
+
+def changeModeToMultiplayer():
+    global mode 
+    mode = "multiPlayer"
+    multiPlayerButton["bg"] = "lightgreen"
+    singlePlayerButton["bg"] = "lightgrey"
+
+def updateBoard():
+    for key in board.keys():
+        buttons[key-1]["text"] = board[key]
 
 def checkForWin(player):
     # rows
@@ -51,6 +69,7 @@ def checkForWin(player):
     elif board[3] == board[5] and board[5] == board[7] and board[7] == player:
         return True
     
+
     return False
 
 def checkForDraw():
@@ -61,9 +80,8 @@ def checkForDraw():
     return True
 
 def restartGame():
-    global game_end, turn
+    global game_end
     game_end = False
-    turn = "x"
     for button in buttons:
         button["text"] = " "
 
@@ -73,51 +91,127 @@ def restartGame():
     titleLabel = Label(frame1 , text="Tic Tac Toe" , font=("Arial" , 30) , bg="orange" , width=15 )
     titleLabel.grid(row=0 , column=0)
 
-
-def play(event):
-    global turn, game_end
+def minimax(board , isMaximizing):
     
+    if checkForWin("o"):
+        return 1 
+    
+    if checkForWin("x"):
+        return -1
+    
+    if checkForDraw():
+        return 0
+    
+    if isMaximizing:
+        bestScore = -100
+
+        for key in board.keys():
+            if board[key] == " ":
+                board[key] = "o"
+                score = minimax(board , False) # minimax
+                board[key] = " "
+                if score > bestScore : 
+                    bestScore = score 
+        
+        return bestScore
+    
+    else:
+        bestScore = 100
+
+        for key in board.keys():
+            if board[key] == " ":
+                board[key] = "x"
+                score = minimax(board , True) # minimax
+                board[key] = " "
+                if score < bestScore : 
+                    bestScore = score 
+        
+        return bestScore
+
+def playComputer():
+    bestScore = -100
+    bestMove = 0
+
+    for key in board.keys():
+        if board[key] == " ":
+            board[key] = "o"
+            score = minimax(board , False) # minimax
+            board[key] = " "
+            if score > bestScore : 
+                bestScore = score 
+                bestMove = key
+
+    board[bestMove] = "o"
+
+# Function to play
+def play(event):
+    global turn,game_end
     if game_end:
         return
-        
+    
     button = event.widget
     buttonText = str(button)
     clicked = buttonText[-1]
-    
     if clicked == "n" :
         clicked = 1
     else :
         clicked = int(clicked)
     
     if button["text"] == " ":
-        
-        
-        button["text"] = turn
-        board[clicked] = turn
-        
-        # Check for Win
-        if checkForWin(turn):
-            winningLabel = Label(frame1 , text=f"{turn} wins the game", bg="orange", font=("Arial" , 26),width=16 )
-            winningLabel.grid(row = 0 , column=0 , columnspan=3)
-            game_end = True
-            return
+        if turn == "x" :
+            board[clicked] = turn
+            if checkForWin(turn):
+                winningLabel = Label(frame1 , text=f"{turn} wins the game", bg="orange", font=("Arial" , 26),width=16 )
+                winningLabel.grid(row = 0 , column=0 , columnspan=3)
+                game_end = True
 
-        # Check for Draw
+            turn = "o"
+
+            updateBoard()
+
+            if mode == "singlePlayer":
+
+                playComputer()
+
+                if checkForWin(turn):
+                    winningLabel = Label(frame1 , text=f"{turn} wins the game", bg="orange", font=("Arial" , 26),width=16   )
+                    winningLabel.grid(row = 0 , column=0 , columnspan=3)
+                    game_end = True
+
+                turn = "x"
+
+                updateBoard()
+
+           
+            
+        else:
+            board[clicked] = turn
+            updateBoard()
+            if checkForWin(turn):
+                winningLabel = Label(frame1 , text=f"{turn} wins the game" , bg="orange", font=("Arial" , 26),width=16)
+                winningLabel.grid(row = 0 , column=0 , columnspan=3)
+                game_end = True
+            turn = "x"
+
+        
         if checkForDraw():
             drawLabel = Label(frame1 , text=f"Game Draw" , bg="orange", font=("Arial" , 26), width = 16)
             drawLabel.grid(row = 0 , column=0 , columnspan=3)
-            game_end = True
-            return
-            
-        # Switch turn
-        if turn == "x":
-            turn = "o"
-        else:
-            turn = "x" 
+        
+# ------ UI --------
 
+# Change Mode options 
 
+singlePlayerButton = Button(optionFrame , text="SinglePlayer" , width=13 , height=1 , font=("Arial" , 15) , bg="lightgrey" , relief=RAISED , borderwidth=5 , command=changeModeToSinglePlayer)
+singlePlayerButton.grid(row=0 , column=0 , columnspan=1 , sticky=NW)
 
-# First row 
+multiPlayerButton = Button(optionFrame , text="Multiplayer" , width=13 , height=1 , font=("Arial" , 15) , bg="lightgrey" , relief=RAISED , borderwidth=5 , command=changeModeToMultiplayer )
+multiPlayerButton.grid(row=0 , column=1 , columnspan=1 , sticky=NW)
+
+# Tic Tac Toe Board 
+
+#  First row 
+
 button1 = Button(frame2 , text= " " , width=4 , height=2  , font=("Arial" , 30) , bg="yellow" , relief=RAISED , borderwidth=5)
 button1.grid(row = 0 , column=0)
 button1.bind("<Button-1>" , play)
@@ -130,7 +224,8 @@ button3 = Button(frame2 , text= " " , width=4 , height=2  , font=("Arial" , 30),
 button3.grid(row = 0 , column=2)
 button3.bind("<Button-1>" , play)
 
-# second row 
+#  second row 
+
 button4 = Button(frame2 , text= " " , width=4 , height=2  , font=("Arial" , 30), bg="yellow" , relief=RAISED , borderwidth=5 )
 button4.grid(row = 1 , column=0)
 button4.bind("<Button-1>" , play)
@@ -143,7 +238,8 @@ button6 = Button(frame2 , text= " " , width=4 , height=2  , font=("Arial" , 30),
 button6.grid(row = 1 , column=2)
 button6.bind("<Button-1>" , play)
 
-# third row 
+#  third row 
+
 button7 = Button(frame2 , text= " " , width=4 , height=2  , font=("Arial" , 30) , bg="yellow" , relief=RAISED , borderwidth=5)
 button7.grid(row = 2 , column=0)
 button7.bind("<Button-1>" , play)
